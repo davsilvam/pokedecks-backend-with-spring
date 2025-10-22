@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: 'PokeDecks'
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pokedecks
+    username: docker
+    password: docker
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: true
+
+server:
+  port: 8080
