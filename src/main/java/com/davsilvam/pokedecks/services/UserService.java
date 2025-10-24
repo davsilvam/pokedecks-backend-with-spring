@@ -2,13 +2,10 @@ package com.davsilvam.pokedecks.services;
 
 import com.davsilvam.pokedecks.models.User;
 import com.davsilvam.pokedecks.models.repositories.UserRepository;
-import com.davsilvam.pokedecks.services.dtos.CreateUserRequestDTO;
 import com.davsilvam.pokedecks.services.dtos.EditUserProfileRequestDTO;
 import com.davsilvam.pokedecks.services.dtos.UserResponseDTO;
 import com.davsilvam.pokedecks.services.mappers.UserMapper;
 import lombok.AllArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -17,35 +14,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
-    public UserResponseDTO register(CreateUserRequestDTO dto) {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-
-        User user = User.builder()
-                .name(dto.name())
-                .username(dto.username())
-                .email(dto.email())
-                .passwordHash(encoder.encode(dto.password()))
-                .build();
-
-        return UserMapper.toDTO(userRepository.save(user));
-    }
-
-    public UserResponseDTO login(String email, String password) {
-        User user = userRepository.findByEmail(email).orElse(null);
-
-        if (user == null) {
-            throw new IllegalArgumentException("Usuário não encontrado");
-        }
-
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-
-        if (!encoder.matches(password, user.getPasswordHash())) {
-            throw new IllegalArgumentException("Senha incorreta");
-        }
-
-        return UserMapper.toDTO(user);
-    }
 
     public UserResponseDTO findById(UUID id) {
         return UserMapper.toDTO(userRepository.findById(id).orElse(null));

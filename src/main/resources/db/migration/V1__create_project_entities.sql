@@ -83,7 +83,9 @@ CREATE TABLE users
     email         VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role          VARCHAR(255) NOT NULL,
-    address       VARCHAR(255) NOT NULL,
+    address       VARCHAR(255),
+    phone_number  VARCHAR(50),
+    birth_date    DATE,
     CONSTRAINT pk_user PRIMARY KEY (id)
 );
 
