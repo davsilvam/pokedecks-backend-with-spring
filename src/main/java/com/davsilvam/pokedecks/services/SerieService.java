@@ -24,7 +24,7 @@ public class SerieService {
                 .toList();
     }
 
-    public void deleteSerie(String id) {
+    public void deleteSerieById(String id) {
         serieRepository.deleteById(id);
     }
 }

@@ -129,7 +129,9 @@ public class JsonDatabaseSeeder implements CommandLineRunner {
                     case POKEMON -> {
                         Pokemon pokemon = Pokemon.builder()
                                 .card(card)
-                                .dexId(cardNode.has("dexId") ? cardNode.get("dexId").asInt() : 0)
+                                .dexId(cardNode.has("dexId") ? cardNode.get("dexId").isArray() ?
+                                        cardNode.get("dexId").get(0).asInt() :
+                                        cardNode.get("dexId").asInt() : 0)
                                 .hp(cardNode.has("hp") ? cardNode.get("hp").asInt() : 0)
                                 .types(cardNode.has("types") ? String.join(",", mapper.convertValue(cardNode.get("types"), List.class)) : null)
                                 .stage(cardNode.has("stage") ? cardNode.get("stage").asText() : "Basic")

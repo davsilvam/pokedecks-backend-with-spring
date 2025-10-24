@@ -4,16 +4,17 @@ import com.davsilvam.pokedecks.models.*;
 import com.davsilvam.pokedecks.models.repositories.*;
 import com.davsilvam.pokedecks.services.dtos.CardBriefResponseDTO;
 import com.davsilvam.pokedecks.services.dtos.CardResponseDTO;
+import com.davsilvam.pokedecks.services.dtos.SetWithCardsResponseDTO;
 import com.davsilvam.pokedecks.services.mappers.CardMapper;
+import com.davsilvam.pokedecks.services.mappers.SetMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class CardsService {
+public class CardService {
     private final SetRepository setRepository;
     private final CardRepository cardRepository;
     private final PokemonRepository pokemonRepository;
@@ -40,16 +41,18 @@ public class CardsService {
                 .toList();
     }
 
-    public List<CardBriefResponseDTO> getCardsBySetId(String setId) {
+    public SetWithCardsResponseDTO getCardsBySetId(String setId) {
         Set set = setRepository.findById(setId).orElse(null);
 
         if (set == null) {
             throw new IllegalArgumentException("Coleção não encontrada");
         }
 
-        return cardRepository.findBySetId(setId).stream()
-                .map(CardMapper::toCardBriefResponseDTO)
-                .toList();
+        return new SetWithCardsResponseDTO(
+                SetMapper.toDTO(set),
+                cardRepository.findBySetId(setId).stream()
+                        .map(CardMapper::toCardBriefResponseDTO)
+                        .toList());
     }
 
     public List<CardBriefResponseDTO> searchCardsByName(String name) {
@@ -58,7 +61,7 @@ public class CardsService {
                 .toList();
     }
 
-    public void deleteCard(String id) {
+    public void deleteCardById(String id) {
         cardRepository.deleteById(id);
     }
 
