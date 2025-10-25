@@ -22,7 +22,7 @@ services:
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
         value: validate
       - key: APP_SEED_DATABASE
-        value: true
+        value: "true"
 
 databases:
   - name: pokedecks-db
