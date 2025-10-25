@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -62,6 +63,7 @@ public class SetController {
             @ApiResponse(responseCode = "204", description = "Coleção deletada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Coleção não encontrada", content = @Content)
     })
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteSetById(@PathVariable String id) {
         setService.deleteSetById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

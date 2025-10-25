@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,6 +60,7 @@ public class CardController {
             @ApiResponse(responseCode = "204", description = "Carta deletada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Carta não encontrada", content = @Content)
     })
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteCardById(@PathVariable String id) {
         cardService.deleteCardById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

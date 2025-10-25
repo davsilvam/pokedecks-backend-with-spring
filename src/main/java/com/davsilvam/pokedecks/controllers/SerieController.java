@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -62,6 +63,7 @@ public class SerieController {
             @ApiResponse(responseCode = "204", description = "Série deletada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Série não encontrada", content = @Content)
     })
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteSerieById(@PathVariable String id) {
         serieService.deleteSerieById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
