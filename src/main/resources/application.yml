@@ -1,15 +1,10 @@
 spring:
   application:
     name: 'PokeDecks'
-  profiles:
-    active: dev
   datasource:
-    #    url: jdbc:postgresql://localhost:5432/pokedecks
-    url: postgresql://pokedecks_db_user:9uNDxmorvt1yFck6Vw3nhWopNRZ99vEv@dpg-d3uduhggjchc73a8s6u0-a.oregon-postgres.render.com/pokedecks_db
-    #    username: docker
-    username: pokedecks_db_user
-    #    password: docker
-    password: 9uNDxmorvt1yFck6Vw3nhWopNRZ99vEv
+    url: jdbc:postgresql://localhost:5432/pokedecks
+    username: docker
+    password: docker
   jpa:
     hibernate:
       ddl-auto: update
@@ -25,4 +20,4 @@ jwt:
     key: classpath:app.key
 
 server:
-  port: 8081
+  port: 8080
