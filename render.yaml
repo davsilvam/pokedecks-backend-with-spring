@@ -11,18 +11,8 @@ services:
         fromDatabase:
           name: pokedecks-db
           property: connectionString
-      - key: DATABASE_USER
-        fromDatabase:
-          name: pokedecks-db
-          property: user
-      - key: DATABASE_PASSWORD
-        fromDatabase:
-          name: pokedecks-db
-          property: password
-      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
-        value: validate
-      - key: APP_SEED_DATABASE
-        value: "true"
+      - key: JAVA_OPTS
+        value: -Xmx512m -Xms256m
 
 databases:
   - name: pokedecks-db

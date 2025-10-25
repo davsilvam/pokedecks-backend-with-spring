@@ -2,8 +2,23 @@ spring:
   application:
     name: 'PokeDecks'
   datasource:
-    url: ${DATABASE_URL}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/pokedecks}
   jpa:
     hibernate:
       ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    
+jwt:
+  public:
+    key: classpath:app.pub
+  private:
+    key: classpath:app.key
+
+server:
+  port: ${PORT:8080}
