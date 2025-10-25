@@ -2,9 +2,7 @@ spring:
   application:
     name: 'PokeDecks'
   datasource:
-    url: jdbc:postgresql://postgres:5432/pokedecks
-    username: docker
-    password: docker
+    url: ${DATABASE_URL}
   jpa:
     hibernate:
       ddl-auto: validate
