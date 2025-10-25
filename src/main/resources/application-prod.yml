@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: 'PokeDecks'
+  datasource:
+    url: jdbc:postgresql://postgres:5432/pokedecks
+    username: docker
+    password: docker
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false

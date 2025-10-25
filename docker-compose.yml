@@ -11,6 +11,28 @@ services:
       - 'pgdata:/var/lib/postgresql/data'
     networks:
       - 'pokedecks-network'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docker -d pokedecks"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    environment:
+      - 'SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/pokedecks'
+      - 'SPRING_DATASOURCE_USERNAME=docker'
+      - 'SPRING_DATASOURCE_PASSWORD=docker'
+      - 'SPRING_PROFILES_ACTIVE=prod'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - 'pokedecks-network'
 
 volumes:
   pgdata:

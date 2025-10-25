@@ -1,6 +1,8 @@
 spring:
   application:
     name: 'PokeDecks'
+  profiles:
+    active: dev
   datasource:
     url: jdbc:postgresql://localhost:5432/pokedecks
     username: docker
