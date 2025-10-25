@@ -5,6 +5,7 @@ import com.davsilvam.pokedecks.services.SetService;
 import com.davsilvam.pokedecks.services.dtos.SetResponseDTO;
 import com.davsilvam.pokedecks.services.dtos.SetWithCardsResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +28,7 @@ public class SetController {
     @Operation(summary = "Obter coleção por ID", description = "Retorna os detalhes de uma coleção específica pelo seu ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Coleção retornada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Coleção não encontrada")
+            @ApiResponse(responseCode = "404", description = "Coleção não encontrada", content = @Content)
     })
     public ResponseEntity<SetResponseDTO> getSetById(@PathVariable String id) {
         SetResponseDTO response = setService.getSetById(id);
@@ -48,7 +49,7 @@ public class SetController {
     @Operation(summary = "Obter cartas por coleção ID", description = "Retorna uma lista de cartas pertencentes a uma coleção específica pelo seu ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista de cartas retornada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Coleção não encontrada")
+            @ApiResponse(responseCode = "404", description = "Coleção não encontrada", content = @Content)
     })
     public ResponseEntity<SetWithCardsResponseDTO> getCardsBySetId(@PathVariable String id) {
         SetWithCardsResponseDTO response = cardService.getCardsBySetId(id);
@@ -59,7 +60,7 @@ public class SetController {
     @Operation(summary = "Deletar coleção por ID", description = "Deleta uma coleção específica pelo seu ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Coleção deletada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Coleção não encontrada")
+            @ApiResponse(responseCode = "404", description = "Coleção não encontrada", content = @Content)
     })
     public ResponseEntity<Void> deleteSetById(@PathVariable String id) {
         setService.deleteSetById(id);

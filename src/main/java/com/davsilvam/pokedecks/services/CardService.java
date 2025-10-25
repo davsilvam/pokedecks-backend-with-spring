@@ -1,5 +1,6 @@
 package com.davsilvam.pokedecks.services;
 
+import com.davsilvam.pokedecks.config.errors.exceptions.ResourceNotFoundException;
 import com.davsilvam.pokedecks.models.*;
 import com.davsilvam.pokedecks.models.repositories.*;
 import com.davsilvam.pokedecks.services.dtos.CardBriefResponseDTO;
@@ -29,7 +30,7 @@ public class CardService {
         Card card = cardRepository.findById(id).orElse(null);
 
         if (card == null) {
-            return null;
+            throw new ResourceNotFoundException("Carta com ID " + id);
         }
 
         return mapCardToResponseDTO(card);
@@ -45,7 +46,7 @@ public class CardService {
         Set set = setRepository.findById(setId).orElse(null);
 
         if (set == null) {
-            throw new IllegalArgumentException("Coleção não encontrada");
+            throw new ResourceNotFoundException("Coleção com ID " + setId);
         }
 
         return new SetWithCardsResponseDTO(
@@ -62,6 +63,12 @@ public class CardService {
     }
 
     public void deleteCardById(String id) {
+        Card card = cardRepository.findById(id).orElse(null);
+
+        if (card == null) {
+            throw new ResourceNotFoundException("Carta com ID " + id);
+        }
+
         cardRepository.deleteById(id);
     }
 

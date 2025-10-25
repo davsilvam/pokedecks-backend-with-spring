@@ -1,5 +1,6 @@
 package com.davsilvam.pokedecks.services;
 
+import com.davsilvam.pokedecks.config.errors.exceptions.ResourceConflictException;
 import com.davsilvam.pokedecks.config.security.JwtService;
 import com.davsilvam.pokedecks.models.User;
 import com.davsilvam.pokedecks.models.enums.UserRole;
@@ -20,6 +21,18 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
     public UserResponseDTO register(CreateUserRequestDTO request) {
+        User existingUserByUsername = userRepository.findByUsername(request.username()).orElse(null);
+
+        if (existingUserByUsername != null) {
+            throw new ResourceConflictException("Username " + request.username() + " já está em uso");
+        }
+
+        User existingUserByEmail = userRepository.findByEmail(request.email()).orElse(null);
+
+        if (existingUserByEmail != null) {
+            throw new ResourceConflictException("Email " + request.email() + " já está em uso");
+        }
+
         User user = User.builder()
                 .name(request.name())
                 .username(request.username())

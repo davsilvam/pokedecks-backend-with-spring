@@ -5,6 +5,7 @@ import com.davsilvam.pokedecks.services.SetService;
 import com.davsilvam.pokedecks.services.dtos.SerieResponseDTO;
 import com.davsilvam.pokedecks.services.dtos.SetResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +28,7 @@ public class SerieController {
     @Operation(summary = "Obter série por ID", description = "Retorna os detalhes de uma série específica pelo seu ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Série retornada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Série não encontrada")
+            @ApiResponse(responseCode = "404", description = "Série não encontrada", content = @Content)
     })
     public ResponseEntity<SerieResponseDTO> getSerieById(@PathVariable String id) {
         SerieResponseDTO response = serieService.getSerieById(id);
@@ -48,7 +49,7 @@ public class SerieController {
     @Operation(summary = "Obter coleções por série ID", description = "Retorna uma lista de coleções pertencentes a uma série específica pelo seu ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista de coleções retornada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Série não encontrada")
+            @ApiResponse(responseCode = "404", description = "Série não encontrada", content = @Content)
     })
     public ResponseEntity<List<SetResponseDTO>> getSetsBySerieId(@PathVariable String id) {
         List<SetResponseDTO> response = setService.getSetsBySerieId(id);
@@ -59,7 +60,7 @@ public class SerieController {
     @Operation(summary = "Deletar série por ID", description = "Deleta uma série específica pelo seu ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Série deletada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Série não encontrada")
+            @ApiResponse(responseCode = "404", description = "Série não encontrada", content = @Content)
     })
     public ResponseEntity<Void> deleteSerieById(@PathVariable String id) {
         serieService.deleteSerieById(id);

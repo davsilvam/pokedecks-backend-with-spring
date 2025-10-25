@@ -1,6 +1,8 @@
 package com.davsilvam.pokedecks.services;
 
+import com.davsilvam.pokedecks.config.errors.exceptions.ResourceNotFoundException;
 import com.davsilvam.pokedecks.models.Serie;
+import com.davsilvam.pokedecks.models.Set;
 import com.davsilvam.pokedecks.models.repositories.SerieRepository;
 import com.davsilvam.pokedecks.models.repositories.SetRepository;
 import com.davsilvam.pokedecks.services.dtos.SetResponseDTO;
@@ -17,7 +19,13 @@ public class SetService {
     private final SetRepository setRepository;
 
     public SetResponseDTO getSetById(String id) {
-        return SetMapper.toDTO(setRepository.findById(id).orElse(null));
+        Set set = setRepository.findById(id).orElse(null);
+
+        if (set == null) {
+            throw new ResourceNotFoundException("Coleção com ID " + id);
+        }
+
+        return SetMapper.toDTO(set);
     }
 
     public List<SetResponseDTO> getAllSets() {
@@ -30,7 +38,7 @@ public class SetService {
         Serie serie = serieRepository.findById(serieId).orElse(null);
 
         if (serie == null) {
-            throw new IllegalArgumentException("Série não encontrada");
+            throw new ResourceNotFoundException("Série com ID " + serieId);
         }
 
         return setRepository.findBySerieId(serieId).stream()
@@ -39,6 +47,12 @@ public class SetService {
     }
 
     public void deleteSetById(String id) {
+        Set set = setRepository.findById(id).orElse(null);
+
+        if (set == null) {
+            throw new ResourceNotFoundException("Coleção com ID " + id);
+        }
+
         setRepository.deleteById(id);
     }
 }

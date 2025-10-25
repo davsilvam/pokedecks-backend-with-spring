@@ -4,6 +4,7 @@ import com.davsilvam.pokedecks.services.CardService;
 import com.davsilvam.pokedecks.services.dtos.CardBriefResponseDTO;
 import com.davsilvam.pokedecks.services.dtos.CardResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,7 +26,7 @@ public class CardController {
     @Operation(summary = "Obter carta por ID", description = "Retorna os detalhes de uma carta específica pelo seu ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Carta retornada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Carta não encontrada")
+            @ApiResponse(responseCode = "404", description = "Carta não encontrada", content = @Content)
     })
     public ResponseEntity<CardResponseDTO> getCardById(@PathVariable String id) {
         CardResponseDTO response = cardService.getCardById(id);
@@ -56,7 +57,7 @@ public class CardController {
     @Operation(summary = "Deletar carta por ID", description = "Deleta uma carta específica pelo seu ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Carta deletada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Carta não encontrada")
+            @ApiResponse(responseCode = "404", description = "Carta não encontrada", content = @Content)
     })
     public ResponseEntity<Void> deleteCardById(@PathVariable String id) {
         cardService.deleteCardById(id);
