@@ -9,6 +9,7 @@ import com.davsilvam.pokedecks.services.mappers.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -44,6 +45,11 @@ public class UserService {
         }
 
         return UserMapper.toDTO(user);
+    }
+
+    public List<UserResponseDTO> findAll() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(UserMapper::toDTO).toList();
     }
 
     public UserResponseDTO editProfile(UUID id, EditUserProfileRequestDTO dto) {
