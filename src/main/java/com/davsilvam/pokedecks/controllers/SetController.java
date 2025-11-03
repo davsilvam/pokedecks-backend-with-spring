@@ -52,6 +52,7 @@ public class SetController {
             @ApiResponse(responseCode = "200", description = "Lista de cartas retornada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Coleção não encontrada", content = @Content)
     })
+    @Tag(name = "Cartas")
     public ResponseEntity<SetWithCardsResponseDTO> getCardsBySetId(@PathVariable String id) {
         SetWithCardsResponseDTO response = cardService.getCardsBySetId(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);

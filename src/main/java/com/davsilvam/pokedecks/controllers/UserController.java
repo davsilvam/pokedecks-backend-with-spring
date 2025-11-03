@@ -1,7 +1,9 @@
 package com.davsilvam.pokedecks.controllers;
 
+import com.davsilvam.pokedecks.services.OrderService;
 import com.davsilvam.pokedecks.services.UserService;
 import com.davsilvam.pokedecks.services.dtos.EditUserProfileRequestDTO;
+import com.davsilvam.pokedecks.services.dtos.OrderResponseDTO;
 import com.davsilvam.pokedecks.services.dtos.UserResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,6 +26,7 @@ import java.util.UUID;
 @Tag(name = "Usuário", description = "Endpoints para gerenciamento de usuários")
 public class UserController {
     private final UserService userService;
+    private final OrderService orderService;
 
     @GetMapping("/me")
     @Operation(summary = "Obter usuário atual", description = "Retorna os detalhes do usuário atualmente autenticado.")
@@ -37,7 +40,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     @Operation(summary = "Obter usuário por ID", description = "Retorna os detalhes de um usuário específico pelo seu ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuário retornado com sucesso"),
@@ -49,7 +52,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/users")
+    @GetMapping
     @Operation(summary = "Obter todos os usuários", description = "Retorna uma lista de todos os usuários registrados.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista de usuários retornada com sucesso"),
@@ -61,7 +64,20 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(users);
     }
 
-    @PutMapping("/users/{id}")
+
+    @GetMapping("/{userId}/orders")
+    @Operation(summary = "Obter pedidos por ID do usuário", description = "Retorna uma lista de pedidos feitos por um usuário específico pelo seu ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de pedidos retornada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado", content = @Content)
+    })
+    @Tag(name = "Pedidos")
+    public ResponseEntity<List<OrderResponseDTO>> getOrdersByUserId(@PathVariable UUID userId) {
+        List<OrderResponseDTO> response = orderService.getOrdersByUserId(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping("/{id}")
     @Operation(summary = "Editar perfil do usuário", description = "Permite editar o perfil de um usuário específico pelo seu ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Perfil do usuário editado com sucesso"),
@@ -79,7 +95,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(editedUser);
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = "Deletar usuário por ID", description = "Deleta um usuário específico pelo seu ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Usuário deletado com sucesso"),
