@@ -11,3 +11,6 @@ mvnw.cmd
 docker-compose.yml
 Dockerfile
 data/
+render.yaml
+HELP.md
+README.md
