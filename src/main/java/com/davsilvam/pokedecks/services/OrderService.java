@@ -1,5 +1,6 @@
 package com.davsilvam.pokedecks.services;
 
+import com.davsilvam.pokedecks.config.errors.exceptions.InsufficientStockException;
 import com.davsilvam.pokedecks.config.errors.exceptions.ResourceNotFoundException;
 import com.davsilvam.pokedecks.models.Card;
 import com.davsilvam.pokedecks.models.Order;
@@ -13,6 +14,7 @@ import com.davsilvam.pokedecks.services.dtos.OrderResponseDTO;
 import com.davsilvam.pokedecks.services.mappers.OrderMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +26,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final CardRepository cardRepository;
 
+    @Transactional
     public OrderResponseDTO createOrder(CreateOrderRequestDTO order) {
         User user = userRepository.findById(order.userId()).orElse(null);
 
@@ -41,6 +44,17 @@ public class OrderService {
                                             if (card == null) {
                                                 throw new ResourceNotFoundException("Carta com ID " + item.cardId());
                                             }
+
+                                            if (card.getStockQuantity() < item.quantity()) {
+                                                throw new InsufficientStockException(
+                                                        "Estoque insuficiente para a carta '" + card.getName() + 
+                                                        "'. Disponível: " + card.getStockQuantity() + 
+                                                        ", Solicitado: " + item.quantity()
+                                                );
+                                            }
+
+                                            card.setStockQuantity(card.getStockQuantity() - item.quantity());
+                                            cardRepository.save(card);
 
                                             return OrderItem.builder()
                                                     .quantity(item.quantity())

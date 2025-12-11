@@ -39,6 +39,10 @@ public class Card {
     @Column(name = "price", nullable = false)
     private Double price;
 
+    @Column(name = "stock_quantity", nullable = false)
+    @Builder.Default
+    private Integer stockQuantity = 0;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
     private CardCategory category;

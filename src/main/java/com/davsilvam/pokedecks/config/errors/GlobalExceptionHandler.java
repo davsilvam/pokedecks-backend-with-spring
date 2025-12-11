@@ -1,5 +1,6 @@
 package com.davsilvam.pokedecks.config.errors;
 
+import com.davsilvam.pokedecks.config.errors.exceptions.InsufficientStockException;
 import com.davsilvam.pokedecks.config.errors.exceptions.ResourceConflictException;
 import com.davsilvam.pokedecks.config.errors.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
@@ -43,6 +44,20 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handleInsufficientStockException(InsufficientStockException ex) {
+        LOGGER.error(ex.getMessage());
+
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
