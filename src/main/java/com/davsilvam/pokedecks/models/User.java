@@ -51,5 +51,6 @@ public class User {
 
     // --- 1:N Relationships ---
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Order> orders = new ArrayList<>();
 }

@@ -2,13 +2,16 @@ package com.davsilvam.pokedecks.controllers;
 
 import com.davsilvam.pokedecks.services.CardService;
 import com.davsilvam.pokedecks.services.SetService;
+import com.davsilvam.pokedecks.services.dtos.CreateSetRequestDTO;
 import com.davsilvam.pokedecks.services.dtos.SetResponseDTO;
 import com.davsilvam.pokedecks.services.dtos.SetWithCardsResponseDTO;
+import com.davsilvam.pokedecks.services.dtos.UpdateSetRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +58,31 @@ public class SetController {
     @Tag(name = "Cartas")
     public ResponseEntity<SetWithCardsResponseDTO> getCardsBySetId(@PathVariable String id) {
         SetWithCardsResponseDTO response = cardService.getCardsBySetId(id);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping
+    @Operation(summary = "Criar nova coleção", description = "Cria uma nova coleção no sistema.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Coleção criada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Série não encontrada", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Coleção com ID já existe", content = @Content)
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SetResponseDTO> createSet(@Valid @RequestBody CreateSetRequestDTO dto) {
+        SetResponseDTO response = setService.createSet(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar coleção por ID", description = "Atualiza os dados de uma coleção específica pelo seu ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Coleção atualizada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Coleção ou série não encontrada", content = @Content)
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SetResponseDTO> updateSet(@PathVariable String id, @Valid @RequestBody UpdateSetRequestDTO dto) {
+        SetResponseDTO response = setService.updateSet(id, dto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

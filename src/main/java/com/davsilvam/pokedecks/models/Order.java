@@ -28,6 +28,7 @@ public class Order {
 
     // --- 1:N Relationships ---
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<OrderItem> orderItems = new ArrayList<>();
 
     // --- N:1 Relationships ---

@@ -31,8 +31,9 @@ public class Set {
     private LocalDateTime releaseDate;
 
     // --- 1:N Relationships ---
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "set_id")
+    @Builder.Default
     private List<Card> cards = new ArrayList<>();
 
     // --- N:1 Relationships ---

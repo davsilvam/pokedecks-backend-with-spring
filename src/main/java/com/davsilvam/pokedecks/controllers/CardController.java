@@ -3,11 +3,14 @@ package com.davsilvam.pokedecks.controllers;
 import com.davsilvam.pokedecks.services.CardService;
 import com.davsilvam.pokedecks.services.dtos.CardBriefResponseDTO;
 import com.davsilvam.pokedecks.services.dtos.CardResponseDTO;
+import com.davsilvam.pokedecks.services.dtos.CreateCardRequestDTO;
+import com.davsilvam.pokedecks.services.dtos.UpdateCardRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +54,31 @@ public class CardController {
     })
     public ResponseEntity<List<CardBriefResponseDTO>> searchCardByName(@RequestParam String name) {
         List<CardBriefResponseDTO> response = cardService.searchCardsByName(name);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping
+    @Operation(summary = "Criar nova carta", description = "Cria uma nova carta no sistema.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Carta criada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Coleção não encontrada", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Carta com ID já existe", content = @Content)
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CardBriefResponseDTO> createCard(@Valid @RequestBody CreateCardRequestDTO dto) {
+        CardBriefResponseDTO response = cardService.createCard(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar carta por ID", description = "Atualiza os dados de uma carta específica pelo seu ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Carta atualizada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Carta ou coleção não encontrada", content = @Content)
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CardBriefResponseDTO> updateCard(@PathVariable String id, @Valid @RequestBody UpdateCardRequestDTO dto) {
+        CardBriefResponseDTO response = cardService.updateCard(id, dto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

@@ -49,6 +49,7 @@ public class Card {
 
     // --- 1:N Relationships ---
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<OrderItem> orderItems = new ArrayList<>();
 
     // --- N:1 Relationships ---

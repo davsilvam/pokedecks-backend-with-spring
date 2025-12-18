@@ -2,13 +2,16 @@ package com.davsilvam.pokedecks.controllers;
 
 import com.davsilvam.pokedecks.services.SerieService;
 import com.davsilvam.pokedecks.services.SetService;
+import com.davsilvam.pokedecks.services.dtos.CreateSerieRequestDTO;
 import com.davsilvam.pokedecks.services.dtos.SerieResponseDTO;
 import com.davsilvam.pokedecks.services.dtos.SetResponseDTO;
+import com.davsilvam.pokedecks.services.dtos.UpdateSerieRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +57,30 @@ public class SerieController {
     })
     public ResponseEntity<List<SetResponseDTO>> getSetsBySerieId(@PathVariable String id) {
         List<SetResponseDTO> response = setService.getSetsBySerieId(id);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping
+    @Operation(summary = "Criar nova série", description = "Cria uma nova série no sistema.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Série criada com sucesso"),
+            @ApiResponse(responseCode = "409", description = "Série com ID já existe", content = @Content)
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SerieResponseDTO> createSerie(@Valid @RequestBody CreateSerieRequestDTO dto) {
+        SerieResponseDTO response = serieService.createSerie(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar série por ID", description = "Atualiza os dados de uma série específica pelo seu ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Série atualizada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Série não encontrada", content = @Content)
+    })
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SerieResponseDTO> updateSerie(@PathVariable String id, @Valid @RequestBody UpdateSerieRequestDTO dto) {
+        SerieResponseDTO response = serieService.updateSerie(id, dto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
