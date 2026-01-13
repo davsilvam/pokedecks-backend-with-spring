@@ -11,4 +11,6 @@ public interface CardRepository extends JpaRepository<Card, String> {
     List<Card> findBySetId(String setId);
 
     List<Card> findByNameContainingIgnoreCase(String name);
+
+    List<Card> findByStockQuantity(Integer stockQuantity);
 }
