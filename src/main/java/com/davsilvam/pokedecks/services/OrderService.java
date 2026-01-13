@@ -36,36 +36,35 @@ public class OrderService {
 
         Order orderEntity = Order.builder()
                 .orderTime(order.orderTime())
-                .orderItems(
-                        order.orderItems().stream()
-                                .map(item -> {
-                                            Card card = cardRepository.findById(item.cardId()).orElse(null);
-
-                                            if (card == null) {
-                                                throw new ResourceNotFoundException("Carta com ID " + item.cardId());
-                                            }
-
-                                            if (card.getStockQuantity() < item.quantity()) {
-                                                throw new InsufficientStockException(
-                                                        "Estoque insuficiente para a carta '" + card.getName() + 
-                                                        "'. Disponível: " + card.getStockQuantity() + 
-                                                        ", Solicitado: " + item.quantity()
-                                                );
-                                            }
-
-                                            card.setStockQuantity(card.getStockQuantity() - item.quantity());
-                                            cardRepository.save(card);
-
-                                            return OrderItem.builder()
-                                                    .quantity(item.quantity())
-                                                    .card(card)
-                                                    .build();
-                                        }
-                                )
-                                .toList()
-                )
                 .user(user)
                 .build();
+
+        order.orderItems().forEach(item -> {
+            Card card = cardRepository.findById(item.cardId()).orElse(null);
+
+            if (card == null) {
+                throw new ResourceNotFoundException("Carta com ID " + item.cardId());
+            }
+
+            if (card.getStockQuantity() < item.quantity()) {
+                throw new InsufficientStockException(
+                        "Estoque insuficiente para a carta '" + card.getName() + 
+                        "'. Disponível: " + card.getStockQuantity() + 
+                        ", Solicitado: " + item.quantity()
+                );
+            }
+
+            card.setStockQuantity(card.getStockQuantity() - item.quantity());
+            cardRepository.save(card);
+
+            OrderItem orderItem = OrderItem.builder()
+                    .quantity(item.quantity())
+                    .card(card)
+                    .order(orderEntity)
+                    .build();
+
+            orderEntity.getOrderItems().add(orderItem);
+        });
 
         Order savedOrder = orderRepository.save(orderEntity);
         return OrderMapper.toDTO(savedOrder);
