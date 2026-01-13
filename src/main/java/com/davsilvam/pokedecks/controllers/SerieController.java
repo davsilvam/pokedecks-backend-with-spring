@@ -7,7 +7,9 @@ import com.davsilvam.pokedecks.services.dtos.SerieResponseDTO;
 import com.davsilvam.pokedecks.services.dtos.SetResponseDTO;
 import com.davsilvam.pokedecks.services.dtos.UpdateSerieRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,10 +31,21 @@ public class SerieController {
     private final SetService setService;
 
     @GetMapping("/{id}")
-    @Operation(summary = "Obter série por ID", description = "Retorna os detalhes de uma série específica pelo seu ID.")
+    @Operation(
+            summary = "Obter série por ID",
+            description = "Retorna os detalhes de uma série específica pelo seu ID."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Série retornada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Série não encontrada", content = @Content)
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Série retornada com sucesso",
+                    content = @Content(schema = @Schema(implementation = SerieResponseDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Série não encontrada",
+                    content = @Content
+            )
     })
     public ResponseEntity<SerieResponseDTO> getSerieById(@PathVariable String id) {
         SerieResponseDTO response = serieService.getSerieById(id);
@@ -40,9 +53,18 @@ public class SerieController {
     }
 
     @GetMapping
-    @Operation(summary = "Obter todas as séries", description = "Retorna uma lista de todas as séries disponíveis.")
+    @Operation(
+            summary = "Obter todas as séries",
+            description = "Retorna uma lista de todas as séries disponíveis no sistema."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de séries retornada com sucesso")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de séries retornada com sucesso",
+                    content = @Content(
+                            array = @ArraySchema(schema = @Schema(implementation = SerieResponseDTO.class))
+                    )
+            )
     })
     public ResponseEntity<List<SerieResponseDTO>> getAllSeries() {
         List<SerieResponseDTO> response = serieService.getAllSeries();
@@ -50,10 +72,23 @@ public class SerieController {
     }
 
     @GetMapping("/{id}/sets")
-    @Operation(summary = "Obter coleções por série ID", description = "Retorna uma lista de coleções pertencentes a uma série específica pelo seu ID.")
+    @Operation(
+            summary = "Obter coleções por série ID",
+            description = "Retorna uma lista de coleções pertencentes a uma série específica pelo seu ID."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de coleções retornada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Série não encontrada", content = @Content)
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de coleções retornada com sucesso",
+                    content = @Content(
+                            array = @ArraySchema(schema = @Schema(implementation = SetResponseDTO.class))
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Série não encontrada",
+                    content = @Content
+            )
     })
     public ResponseEntity<List<SetResponseDTO>> getSetsBySerieId(@PathVariable String id) {
         List<SetResponseDTO> response = setService.getSetsBySerieId(id);
@@ -61,10 +96,31 @@ public class SerieController {
     }
 
     @PostMapping
-    @Operation(summary = "Criar nova série", description = "Cria uma nova série no sistema.")
+    @Operation(
+            summary = "Criar nova série",
+            description = "Cria uma nova série no sistema. Restrito a administradores."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Série criada com sucesso"),
-            @ApiResponse(responseCode = "409", description = "Série com ID já existe", content = @Content)
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Série criada com sucesso",
+                    content = @Content(schema = @Schema(implementation = SerieResponseDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Requisição inválida - dados de entrada inválidos",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado - usuário não é administrador",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Conflito - série com ID já existe",
+                    content = @Content
+            )
     })
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SerieResponseDTO> createSerie(@Valid @RequestBody CreateSerieRequestDTO dto) {
@@ -73,10 +129,31 @@ public class SerieController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualizar série por ID", description = "Atualiza os dados de uma série específica pelo seu ID.")
+    @Operation(
+            summary = "Atualizar série por ID",
+            description = "Atualiza os dados de uma série específica pelo seu ID. Restrito a administradores."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Série atualizada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Série não encontrada", content = @Content)
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Série atualizada com sucesso",
+                    content = @Content(schema = @Schema(implementation = SerieResponseDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Requisição inválida - dados de entrada inválidos",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado - usuário não é administrador",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Série não encontrada",
+                    content = @Content
+            )
     })
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SerieResponseDTO> updateSerie(@PathVariable String id, @Valid @RequestBody UpdateSerieRequestDTO dto) {
@@ -85,10 +162,25 @@ public class SerieController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Deletar série por ID", description = "Deleta uma série específica pelo seu ID.")
+    @Operation(
+            summary = "Deletar série por ID",
+            description = "Deleta uma série específica pelo seu ID. Restrito a administradores."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Série deletada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Série não encontrada", content = @Content)
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Série deletada com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado - usuário não é administrador",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Série não encontrada",
+                    content = @Content
+            )
     })
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteSerieById(@PathVariable String id) {

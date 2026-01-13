@@ -7,7 +7,9 @@ import com.davsilvam.pokedecks.services.dtos.SetResponseDTO;
 import com.davsilvam.pokedecks.services.dtos.SetWithCardsResponseDTO;
 import com.davsilvam.pokedecks.services.dtos.UpdateSetRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,16 +25,27 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/sets")
 @AllArgsConstructor
-@Tag(name = "Coleção", description = "Endpoints para gerenciamento de sets")
+@Tag(name = "Coleções", description = "Endpoints para gerenciamento de coleções (sets)")
 public class SetController {
     private final SetService setService;
     private final CardService cardService;
 
     @GetMapping("/{id}")
-    @Operation(summary = "Obter coleção por ID", description = "Retorna os detalhes de uma coleção específica pelo seu ID.")
+    @Operation(
+            summary = "Obter coleção por ID",
+            description = "Retorna os detalhes de uma coleção específica pelo seu ID."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Coleção retornada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Coleção não encontrada", content = @Content)
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Coleção retornada com sucesso",
+                    content = @Content(schema = @Schema(implementation = SetResponseDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Coleção não encontrada",
+                    content = @Content
+            )
     })
     public ResponseEntity<SetResponseDTO> getSetById(@PathVariable String id) {
         SetResponseDTO response = setService.getSetById(id);
@@ -40,9 +53,18 @@ public class SetController {
     }
 
     @GetMapping
-    @Operation(summary = "Obter todas as coleções", description = "Retorna uma lista de todas as coleções disponíveis.")
+    @Operation(
+            summary = "Obter todas as coleções",
+            description = "Retorna uma lista de todas as coleções disponíveis no sistema."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de coleções retornada com sucesso")
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de coleções retornada com sucesso",
+                    content = @Content(
+                            array = @ArraySchema(schema = @Schema(implementation = SetResponseDTO.class))
+                    )
+            )
     })
     public ResponseEntity<List<SetResponseDTO>> getAllSets() {
         List<SetResponseDTO> response = setService.getAllSets();
@@ -50,10 +72,21 @@ public class SetController {
     }
 
     @GetMapping("/{id}/cards")
-    @Operation(summary = "Obter cartas por coleção ID", description = "Retorna uma lista de cartas pertencentes a uma coleção específica pelo seu ID.")
+    @Operation(
+            summary = "Obter cartas por coleção ID",
+            description = "Retorna uma lista de cartas pertencentes a uma coleção específica pelo seu ID."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de cartas retornada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Coleção não encontrada", content = @Content)
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de cartas retornada com sucesso",
+                    content = @Content(schema = @Schema(implementation = SetWithCardsResponseDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Coleção não encontrada",
+                    content = @Content
+            )
     })
     @Tag(name = "Cartas")
     public ResponseEntity<SetWithCardsResponseDTO> getCardsBySetId(@PathVariable String id) {
@@ -62,11 +95,36 @@ public class SetController {
     }
 
     @PostMapping
-    @Operation(summary = "Criar nova coleção", description = "Cria uma nova coleção no sistema.")
+    @Operation(
+            summary = "Criar nova coleção",
+            description = "Cria uma nova coleção no sistema. Restrito a administradores."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Coleção criada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Série não encontrada", content = @Content),
-            @ApiResponse(responseCode = "409", description = "Coleção com ID já existe", content = @Content)
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Coleção criada com sucesso",
+                    content = @Content(schema = @Schema(implementation = SetResponseDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Requisição inválida - dados de entrada inválidos",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado - usuário não é administrador",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Série não encontrada",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Conflito - coleção com ID já existe",
+                    content = @Content
+            )
     })
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SetResponseDTO> createSet(@Valid @RequestBody CreateSetRequestDTO dto) {
@@ -75,10 +133,31 @@ public class SetController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualizar coleção por ID", description = "Atualiza os dados de uma coleção específica pelo seu ID.")
+    @Operation(
+            summary = "Atualizar coleção por ID",
+            description = "Atualiza os dados de uma coleção específica pelo seu ID. Restrito a administradores."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Coleção atualizada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Coleção ou série não encontrada", content = @Content)
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Coleção atualizada com sucesso",
+                    content = @Content(schema = @Schema(implementation = SetResponseDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Requisição inválida - dados de entrada inválidos",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado - usuário não é administrador",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Coleção ou série não encontrada",
+                    content = @Content
+            )
     })
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SetResponseDTO> updateSet(@PathVariable String id, @Valid @RequestBody UpdateSetRequestDTO dto) {
@@ -87,10 +166,25 @@ public class SetController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Deletar coleção por ID", description = "Deleta uma coleção específica pelo seu ID.")
+    @Operation(
+            summary = "Deletar coleção por ID",
+            description = "Deleta uma coleção específica pelo seu ID. Restrito a administradores."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Coleção deletada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Coleção não encontrada", content = @Content)
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Coleção deletada com sucesso"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Acesso negado - usuário não é administrador",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Coleção não encontrada",
+                    content = @Content
+            )
     })
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteSetById(@PathVariable String id) {

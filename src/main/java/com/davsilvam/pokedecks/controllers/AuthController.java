@@ -6,6 +6,7 @@ import com.davsilvam.pokedecks.services.dtos.CreateUserRequestDTO;
 import com.davsilvam.pokedecks.services.dtos.UserResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,11 +27,26 @@ public class AuthController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    @Operation(summary = "Registrar novo usuário", description = "Registra um novo usuário no sistema.")
+    @Operation(
+            summary = "Registrar novo usuário",
+            description = "Registra um novo usuário no sistema com nome, email, username e senha."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Usuário registrado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Requisição inválida", content = @Content),
-            @ApiResponse(responseCode = "409", description = "Usuário já existe", content = @Content)
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Usuário registrado com sucesso",
+                    content = @Content(schema = @Schema(implementation = UserResponseDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Requisição inválida - dados de entrada inválidos",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Conflito - usuário com email ou username já existe",
+                    content = @Content
+            )
     })
     public ResponseEntity<UserResponseDTO> register(@RequestBody CreateUserRequestDTO request) {
         UserResponseDTO response = authenticationService.register(request);
@@ -38,10 +54,21 @@ public class AuthController {
     }
 
     @PostMapping("/authenticate")
-    @Operation(summary = "Autenticar usuário", description = "Autentica um usuário existente no sistema.")
+    @Operation(
+            summary = "Autenticar usuário",
+            description = "Autentica um usuário existente no sistema usando Basic Auth e retorna um token JWT."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuário autenticado com sucesso"),
-            @ApiResponse(responseCode = "401", description = "Credenciais inválidas", content = @Content)
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Usuário autenticado com sucesso - retorna token JWT",
+                    content = @Content(schema = @Schema(implementation = AuthenticateResponseDTO.class))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Credenciais inválidas - email ou senha incorretos",
+                    content = @Content
+            )
     })
     public ResponseEntity<AuthenticateResponseDTO> authenticate(Authentication authentication) {
         String token = authenticationService.authenticate(authentication);
