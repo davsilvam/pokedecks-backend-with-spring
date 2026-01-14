@@ -5,6 +5,7 @@ public record CardBriefResponseDTO(
         String name,
         String imageUrl,
         Integer localId,
-        Integer stockQuantity
+        Integer stockQuantity,
+        Double price
 ) {
 }

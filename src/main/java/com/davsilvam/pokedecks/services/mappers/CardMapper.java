@@ -90,7 +90,8 @@ public class CardMapper {
                 card.getName(),
                 card.getImageUrl(),
                 card.getLocalId(),
-                card.getStockQuantity()
+                card.getStockQuantity(),
+                card.getPrice()
         );
     }
 }
